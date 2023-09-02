@@ -33,6 +33,11 @@ run:
 dist: $(TARGET)
 	$(KOS_STRIP) $(TARGET)
 
-cdi:
+cdi: all
 	mkdcdisc -d ./flat/ -e johnny_dc.elf -o johnny_dreamcastaway.cdi
+
+test: cdi
+	mv johnny_dreamcastaway.cdi ./testing/ && redream ./testing/johnny_dreamcastaway.cdi 
+
+
 
