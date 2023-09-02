@@ -30,25 +30,10 @@
 #include "resource.h"
 #include "uncompress.h"
 
-#define MAX_ADS_RESOURCES 100
-#define MAX_BMP_RESOURCES 200
-#define MAX_PAL_RESOURCES 1
-#define MAX_SCR_RESOURCES 20
-#define MAX_TTM_RESOURCES 100
-
-
-struct TAdsResource *adsResources[MAX_ADS_RESOURCES];
-struct TBmpResource *bmpResources[MAX_BMP_RESOURCES];
-struct TPalResource *palResources[MAX_PAL_RESOURCES];
-struct TScrResource *scrResources[MAX_SCR_RESOURCES];
-struct TTtmResource *ttmResources[MAX_TTM_RESOURCES];
-int numAdsResources = 0;
-int numBmpResources = 0;
+struct TPalResource *palResources[1];
 int numPalResources = 0;
-int numScrResources = 0;
-int numTtmResources = 0;
 
-static struct TMapFile mapFile;
+//static struct TMapFile mapFile;
 
 
 static struct TAdsResource *parseAdsResource(FILE *f)
@@ -338,115 +323,37 @@ static struct TTtmResource *parseTtmResource(FILE *f)
     return ttmResource;
 }
 
-
-static void parseMapFile(char *fileName)
+void parseResourceFiles()
 {
-    FILE *f_map; // , *f_res;  // TODO
 
-    f_map = fopen(fileName,"rb");
+    FILE *fpal;
+    fpal = safe_fopen("/cd/flat/JOHNCAST.PAL" ,"rb");
 
-    if (f_map == NULL)
-        fatalError("Resources map file not found: %s\n", fileName);
+    palResources[numPalResources] = parsePalResource(fpal);
+    palResources[numPalResources]->resName = "JOHNCAST.PAL";
+    numPalResources++;
+    fclose(fpal);
 
-    mapFile.unknown1 = readUint8(f_map);   // first 5 uint8s unknown
-    mapFile.unknown2 = readUint8(f_map);
-    mapFile.unknown3 = readUint8(f_map);
-    mapFile.unknown4 = readUint8(f_map);   // ? number of resources files available in this index
-    mapFile.unknown5 = readUint8(f_map);
-    mapFile.unknown6 = readUint8(f_map);
-
-    mapFile.resFileName = "/rd/";
-
-    strcat(mapFile.resFileName, (char *) getString(f_map,13));
-
-    mapFile.numEntries = readUint16(f_map);
-
-    mapFile.Entries = safe_malloc(mapFile.numEntries * sizeof(struct TMapFileEntry));
-
-    for (int i=0; i<mapFile.numEntries; i++) {
-        mapFile.Entries[i].length = readUint32(f_map);
-        mapFile.Entries[i].offset = readUint32(f_map);
-    }
-
-    fclose(f_map);
-}
-
-
-static void parseResourceFile()
-{
-    FILE *f;
-
-    f = fopen(mapFile.resFileName,"rb");
-
-    if (f == NULL)
-        fatalError("Main resources file not found: %s\n", mapFile.resFileName);
-
-    if (debugMode) {
-        printf("Loading resources ");
-        fflush (stdout);
-    }
-
-    for (int i=0; i < mapFile.numEntries; i++) {
-
-        fseek(f, mapFile.Entries[i].offset, SEEK_SET);
-
-        mapFile.Entries[i].resName = (char *) readUint8Block(f,13);
-        mapFile.Entries[i].resSize = readUint32(f);
-
-        char *resName = mapFile.Entries[i].resName;
-        char *resType = resName + strlen(resName) - 4;  // get the extension .BMP .ADS etc.
-
-        if (debugMode) {
-             putchar('.');
-             fflush(stdout);
-        }
-
-        if (!strcmp(resType, ".ADS")) {
-            adsResources[numAdsResources] = parseAdsResource(f);
-            adsResources[numAdsResources]->resName = resName;
-            numAdsResources++;
-        }
-        else if (!strcmp(resType, ".BMP")) {
-            bmpResources[numBmpResources] = parseBmpResource(f);
-            bmpResources[numBmpResources]->resName = resName;
-            numBmpResources++;
-        }
-        else if (!strcmp(resType, ".PAL")) {
-            palResources[numPalResources] = parsePalResource(f);
-            palResources[numPalResources]->resName = resName;
-            numPalResources++;
-        }
-        else if (!strcmp(resType, ".SCR")) {
-            scrResources[numScrResources] = parseScrResource(f);
-            scrResources[numScrResources]->resName = resName;
-            numScrResources++;
-        }
-        else if (!strcmp(resType, ".TTM")) {
-            ttmResources[numTtmResources] = parseTtmResource(f);
-            ttmResources[numTtmResources]->resName = resName;
-            numTtmResources++;
-        }
-        // Note: there is one .VIN type file too (FILES.VIN)
-        // We dont process it since it's nothing else than a list
-        // of files, which we dont need
-    }
-
-    fclose(f);
-
-    if (debugMode)
-        putchar('\n');
-}
-
-
-void parseResourceFiles(char * filename)
-{
-    parseMapFile(filename);
-    parseResourceFile();
 }
 
 
 struct TAdsResource *findAdsResource(char *searchString)
 {
+    FILE *f;
+
+    int searchSiz = sizeof(searchString);
+    char fullSearch[searchSiz + 4];
+
+    strcpy(fullSearch,"/cd/");
+    strcat(fullSearch,searchString);
+
+    f = fopen(fullSearch,"rb");
+    struct TAdsResource *adsRes = parseAdsResource(f);
+    fclose(f);
+
+    return adsRes;
+
+/*
     struct TAdsResource *result = NULL;
 
     for (int i=0; i < numAdsResources && result == NULL; i++) {
@@ -458,11 +365,27 @@ struct TAdsResource *findAdsResource(char *searchString)
         fatalError("ADS resource %s not found.", searchString);
 
     return result;
+    */
 }
 
 
 struct TBmpResource *findBmpResource(char *searchString)
 {
+  FILE *f;
+
+    int searchSiz = sizeof(searchString);
+    char fullSearch[searchSiz + 4];
+
+    strcpy(fullSearch,"/cd/");
+    strcat(fullSearch,searchString);
+
+    f = fopen(fullSearch,"rb");
+
+    struct TBmpResource  *tmp = parseBmpResource(f);
+    fclose(f);
+    return tmp;
+
+    /*
     struct TBmpResource *result = NULL;
 
     for (int i=0; i < numBmpResources && result == NULL; i++) {
@@ -474,11 +397,28 @@ struct TBmpResource *findBmpResource(char *searchString)
         fatalError("BMP resource %s not found.", searchString);
 
     return result;
+    */
 }
 
 
 struct TScrResource *findScrResource(char *searchString)
 {
+  FILE *f;
+
+    int searchSiz = sizeof(searchString);
+    char fullSearch[searchSiz + 4];
+
+    strcpy(fullSearch,"/cd/");
+    strcat(fullSearch,searchString);
+
+    f = fopen(fullSearch,"rb");
+
+    struct TScrResource *tmp = parseScrResource(f);
+    fclose(f);
+    return tmp;
+
+
+    /*
     struct TScrResource *result = NULL;
 
     for (int i=0; i < numScrResources && result == NULL; i++) {
@@ -490,11 +430,28 @@ struct TScrResource *findScrResource(char *searchString)
         fatalError("SCR resource %s not found.", searchString);
 
     return result;
+    */
 }
 
 
 struct TTtmResource *findTtmResource(char *searchString)
 {
+
+    FILE *f;
+
+    int searchSiz = sizeof(searchString);
+    char fullSearch[searchSiz + 4];
+
+    strcpy(fullSearch,"/cd/");
+    strcat(fullSearch,searchString);
+
+    f = fopen(fullSearch,"rb");
+
+    struct TTtmResource *tmp = parseTtmResource(f);
+    fclose(f);
+    return tmp;
+
+    /*
     struct TTtmResource *result = NULL;
 
     for (int i=0; i < numTtmResources && result == NULL; i++) {
@@ -506,5 +463,7 @@ struct TTtmResource *findTtmResource(char *searchString)
         fatalError("TTM resource %s not found.", searchString);
 
     return result;
+
+    */
 }
 

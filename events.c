@@ -74,6 +74,7 @@ static void eventsProcessEvents()
                             graphicsEnd();
                             exit(255);
                             break;
+
                         default:
                             break;
                     }
@@ -94,7 +95,7 @@ static void eventsProcessEvents()
                 graphicsEnd();
                 exit(255);
                 break;
-                
+
             default:
                 break;
         }

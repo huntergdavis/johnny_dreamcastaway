@@ -41,7 +41,6 @@
 #include "mytypes.h"
 #include "utils.h"
 #include "resource.h"
-#include "dump.h"
 #include "graphics.h"
 #include "events.h"
 #include "sound.h"
@@ -84,7 +83,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     /* Your program start here... */
-    parseResourceFiles("/cd/RESOURCE.MAP");
+    parseResourceFiles();
 
 
     graphicsInit();
