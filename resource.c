@@ -30,6 +30,8 @@
 #include "resource.h"
 #include "uncompress.h"
 
+#include <kos.h>
+
 struct TPalResource *palResources[1];
 int numPalResources = 0;
 
@@ -344,7 +346,7 @@ struct TAdsResource *findAdsResource(char *searchString)
     int searchSiz = sizeof(searchString);
     char fullSearch[searchSiz + 4];
 
-    strcpy(fullSearch,"/cd/");
+    strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
 
     f = fopen(fullSearch,"rb");
@@ -376,7 +378,7 @@ struct TBmpResource *findBmpResource(char *searchString)
     int searchSiz = sizeof(searchString);
     char fullSearch[searchSiz + 4];
 
-    strcpy(fullSearch,"/cd/");
+    strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
 
     f = fopen(fullSearch,"rb");
@@ -408,7 +410,7 @@ struct TScrResource *findScrResource(char *searchString)
     int searchSiz = sizeof(searchString);
     char fullSearch[searchSiz + 4];
 
-    strcpy(fullSearch,"/cd/");
+    strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
 
     f = fopen(fullSearch,"rb");
@@ -442,7 +444,7 @@ struct TTtmResource *findTtmResource(char *searchString)
     int searchSiz = sizeof(searchString);
     char fullSearch[searchSiz + 4];
 
-    strcpy(fullSearch,"/cd/");
+    strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
 
     f = fopen(fullSearch,"rb");
