@@ -4,7 +4,7 @@ Johnny Reborn is an open source engine for the classic Johnny Castaway screen sa
 
 It is written in C using the SDL2 library, and was successfully compiled and tested on Linux as well as Windows (MinGW), both 32 and 64 bits.
 
-Update from Hunter D Sept 1 2023 - Linux Makefile for KOS. Debugging.  Runs out of memory after 1hr or when ship appears.  Next step - figure out why it's not seeing the extracted file when loaded from CDI and built from KOS makefile
+Update from Hunter D Sept 1 2023 - Linux Makefile for KOS. Debugging.  Reports of last version Runs out of memory after 1hr or when ship appears.  Next step - figure out why this version is segfaulting 
 
 Update from Hunter D. Mar/10/21 - I backported this to use SDL 1.2, kallistos and DreamSDK.  This branch is for the DreamSDK dreamcast build specifically, a linux build environment will come later
 

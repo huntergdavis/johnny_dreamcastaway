@@ -344,7 +344,7 @@ struct TAdsResource *findAdsResource(char *searchString)
     FILE *f;
 
     int searchSiz = sizeof(searchString);
-    char fullSearch[searchSiz + 4];
+    char fullSearch[searchSiz + 9];
 
     strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
@@ -376,7 +376,7 @@ struct TBmpResource *findBmpResource(char *searchString)
   FILE *f;
 
     int searchSiz = sizeof(searchString);
-    char fullSearch[searchSiz + 4];
+    char fullSearch[searchSiz + 9];
 
     strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
@@ -408,7 +408,7 @@ struct TScrResource *findScrResource(char *searchString)
   FILE *f;
 
     int searchSiz = sizeof(searchString);
-    char fullSearch[searchSiz + 4];
+    char fullSearch[searchSiz + 9];
 
     strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
@@ -442,7 +442,7 @@ struct TTtmResource *findTtmResource(char *searchString)
     FILE *f;
 
     int searchSiz = sizeof(searchString);
-    char fullSearch[searchSiz + 4];
+    char fullSearch[searchSiz + 9];
 
     strcpy(fullSearch,"/cd/flat/");
     strcat(fullSearch,searchString);
